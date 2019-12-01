@@ -1,14 +1,14 @@
 version: 2
 jobs:
+  general:
+    build_dir: docker
   build:
-    working_directory: ~/app
     environment:
       IMAGE_NAME: rrouzbeh/zeek-kafka
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
-      - checkout:
-          path: ~/app/docker
+      - checkout
       - setup_remote_docker
       - run:
           name: Build Docker image

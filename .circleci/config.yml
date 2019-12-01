@@ -1,7 +1,7 @@
 version: 2
+general:
+  build_dir: docker
 jobs:
-  general:
-    build_dir: docker
   build:
     environment:
       IMAGE_NAME: rrouzbeh/zeek-kafka

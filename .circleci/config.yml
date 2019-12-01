@@ -8,7 +8,6 @@ version: 2
         steps:
           - checkout
           - setup_remote_docker
-            version: 18.05.0-ce
           - run:
               name: Build Docker image
               command: docker build -d docker/Dockerfile -t $IMAGE_NAME:latest .

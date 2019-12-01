@@ -1,2 +1,2 @@
 # docker-zeek-kafka
-zeek Dockerfile include kafka package
+Zeek Dockerfile include kafka package

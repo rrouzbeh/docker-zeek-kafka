@@ -1,7 +1,7 @@
 FROM alpine:3.10 as builder
 
 LABEL maintainer "Rouzbeh Radparvar"
-
+# Credits to https://github.com/blacktop
 ENV ZEEK_VERSION 3.0.0
 
 RUN apk add --no-cache zlib openssl libstdc++ libpcap libgcc
@@ -77,8 +77,9 @@ RUN apk --no-cache add ca-certificates zlib openssl libstdc++ libpcap libmaxmind
 
 COPY --from=builder /usr/local/zeek /usr/local/zeek
 COPY local.zeek /usr/local/zeek/share/zeek/site/local.zeek
+
+# Add zeek scripts
 COPY scripts /usr/local/zeek/share/zeek/site/scripts
-# Add a few zeek scripts
 
 WORKDIR /logs
 

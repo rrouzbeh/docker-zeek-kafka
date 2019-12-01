@@ -1,0 +1,11 @@
+version: '3'
+services:
+  zeek-eth0:
+    image: rrouzbeh/zeek-kafka:latest
+    container_name: zeek-eth0
+    volumes:
+      - ./logs:/logs
+    cap_add:
+      - NET_RAW
+    network_mode: "host"
+    command: -i eth0 local "Site::local_nets += { 10.0.0.0/8,192.168.0.0/16,172.16.0.0/12 }"

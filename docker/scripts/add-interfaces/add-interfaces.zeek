@@ -11,16 +11,14 @@ export {
 	const include_logs: set[Log::ID] = { Conn::LOG } &redef;
 }
 
-@if ( Cluster::is_enabled() )
-
 type AddedFields: record {
 	interface: string &log;
 };
-
-function interface_ext_func(path: string): AddedFields
+envtimefmt = getenv("ZEEK_CUT_TIMEFMT")
+function interface_ext_func(): AddedFields
 	{
-	if ( Cluster::nodes[Cluster::node]?$interface )
-		return AddedFields($interface = Cluster::nodes[Cluster::node]$interface);
+	
+		return AddedFields($interface = getenv("ZEEK_INTERFACE"));
 	}
 
 event bro_init() &priority=-3
@@ -37,11 +35,3 @@ event bro_init() &priority=-3
 		}
 	}
 
-@else
-
-event bro_init()
-	{
-	Reporter::warning("Interfaces are not added to logs (not in cluster mode)!");
-	}
-
-@endif

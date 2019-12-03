@@ -14,10 +14,10 @@ export {
 type AddedFields: record {
 	interface: string &log;
 };
-function interface_ext_func(): AddedFields
+function interface_ext_func(path: string): AddedFields
 	{
-	
-		return AddedFields($interface = getenv("ZEEK_INTERFACE"));
+        $interface = getenv("ZEEK_INTERFACE")
+		return AddedFields($interface);
 	}
 
 event bro_init() &priority=-3

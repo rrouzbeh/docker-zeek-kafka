@@ -118,6 +118,15 @@
 # Json Logs
 @load scripts/json-logs
 
+# Corlight CommunityID
+@load scripts/CommunityID
+
+# J-Gras add-node-names
+@load scripts/add-node-names
+
+# J-Gras add-interfaces
+@load scripts/add-interfaces
+
 # Kafka Plugin
 @load Apache/Kafka
 redef Kafka::logs_to_send = set(Conn::LOG, HTTP::LOG, SSL::LOG, Files::LOG, DNS::LOG, Notice::LOG);
@@ -149,5 +158,9 @@ redef Log::default_field_name_map = {
     ["method"] = "http_method",
     ["referrer"] = "http_referrer",
     ["request_body_len"] = "bytes_out",
-    ["response_body_len"] = "bytes_in"
+    ["response_body_len"] = "bytes_in",
+    ["community_id"] = "network_community_id",
+    ["_node_name"] = "sensor_node_name",
+    ["_interface "] = "sensor_interface",
+
     };

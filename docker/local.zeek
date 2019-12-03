@@ -161,6 +161,6 @@ redef Log::default_field_name_map = {
     ["response_body_len"] = "bytes_in",
     ["community_id"] = "network_community_id",
     ["_node_name"] = "sensor_node_name",
-    ["_interface "] = "sensor_interface",
+    ["_interface "] = "sensor_interface"
 
     };

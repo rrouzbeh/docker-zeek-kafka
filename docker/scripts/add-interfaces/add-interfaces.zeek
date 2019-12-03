@@ -3,7 +3,7 @@ module AddInterfaces;
 export {
     
     redef record Conn::Info += {
-        interface: string &optional &log;
+        _interface: string &optional &log;
     };
 }
 

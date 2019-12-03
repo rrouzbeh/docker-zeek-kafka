@@ -14,7 +14,6 @@ export {
 type AddedFields: record {
 	interface: string &log;
 };
-envtimefmt = getenv("ZEEK_CUT_TIMEFMT")
 function interface_ext_func(): AddedFields
 	{
 	

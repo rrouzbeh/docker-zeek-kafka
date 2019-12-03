@@ -119,7 +119,7 @@
 @load scripts/json-logs
 
 # Corlight CommunityID
-@load scripts/CommunityID
+#@load scripts/CommunityID
 
 # J-Gras add-node-names
 @load scripts/add-node-names

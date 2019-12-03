@@ -3,6 +3,9 @@ services:
   zeek-eth0:
     image: rrouzbeh/zeek-kafka:latest
     container_name: zeek-eth0
+    environment:
+      - ZEEK_INTERFACE=ens34
+      - ZEEK_NODE_NAME=pardis
     volumes:
       - ./logs:/logs
     cap_add:

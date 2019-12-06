@@ -124,6 +124,9 @@
 # add-interfaces
 @load scripts/add-interfaces
 
+# Mitre BZAR
+@load scripts/bzar
+
 # Kafka Plugin
 @load Apache/Kafka
 redef Kafka::logs_to_send = set(Conn::LOG, HTTP::LOG, SSL::LOG, Files::LOG, DNS::LOG, Notice::LOG);

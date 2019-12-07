@@ -151,7 +151,7 @@ redef record connection += {
 	dns_state: State &optional;
 };
 
-const ports = { 53/udp, 53/tcp, 5353/udp, 5355/udp };
+const ports = { 53/udp, 53/tcp, 5353/udp };
 redef likely_server_ports += { ports };
 
 event zeek_init() &priority=5

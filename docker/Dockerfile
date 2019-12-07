@@ -77,6 +77,7 @@ RUN apk --no-cache add ca-certificates zlib openssl libstdc++ libpcap libmaxmind
 
 COPY --from=builder /usr/local/zeek /usr/local/zeek
 COPY local.zeek /usr/local/zeek/share/zeek/site/local.zeek
+COPY main.zeek /usr/local/zeek/share/zeek/base/protocols/dns/main.zeek
 
 # Add zeek scripts
 COPY scripts /usr/local/zeek/share/zeek/site/scripts

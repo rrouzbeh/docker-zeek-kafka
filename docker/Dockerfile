@@ -1,63 +1,49 @@
-FROM alpine:3.10 as builder
+FROM debian:stretch
 
-LABEL maintainer "Rouzbeh Radparvar"
-# Credits to https://github.com/blacktop
-ENV ZEEK_VERSION 3.0.0
+RUN apt-get update && apt-get install -y \
+    bison \
+    build-essential \
+    ca-certificates \
+    cmake \
+    flex \
+    gawk \
+    git \
+    libcurl4-openssl-dev \
+    libgeoip-dev \
+    libjemalloc-dev \
+    libmaxminddb-dev \
+    libncurses5-dev \
+    libpcap-dev \
+    librocksdb-dev \
+    libssl1.0-dev \
+    python3-dev \
+    python3-pip \
+    swig \
+    wget \
+    zlib1g-dev \
+    --no-install-recommends
 
-RUN apk add --no-cache zlib openssl libstdc++ libpcap libgcc
-RUN apk add --no-cache -t .build-deps \
-  libmaxminddb-dev \
-  linux-headers \
-  openssl-dev \
-  libpcap-dev \
-  python-dev \
-  zlib-dev \
-  binutils \
-  fts-dev \
-  cmake \
-  clang \
-  bison \
-  bash \
-  swig \
-  perl \
-  make \
-  flex \
-  git \
-  g++ \
-  fts
+# get latest zeek from source
+WORKDIR /opt
+RUN git clone --recursive https://github.com/zeek/zeek /opt/zeek-git
+WORKDIR /opt/zeek-git
 
-RUN echo "===> Cloning zeek..." \
-  && cd /tmp \
-  && git clone --recursive --branch v$ZEEK_VERSION https://github.com/zeek/zeek.git
+WORKDIR /tmp/
+RUN ./configure --with-jemalloc=/usr/lib/x86_64-linux-gnu --prefix=/usr/local/zeek
+RUN make -j4 install
 
-RUN echo "===> Compiling zeek..." \
-  && cd /tmp/zeek \
-  && CC=clang ./configure --prefix=/usr/local/zeek \
-  --build-type=MinSizeRel \
-  --disable-broker-tests \
-  --disable-zeekctl \
-  --disable-auxtools \
-  --disable-python \
-  && make -j 2 \
+RUN git clone https://github.com/edenhill/librdkafka.git
+WORKDIR librdkafka
+RUN ./configure  \
+  && make \
   && make install
 
-RUN echo "===> Compiling af_packet plugin..." \
-  && cd /tmp/zeek/aux/ \
-  && git clone https://github.com/J-Gras/bro-af_packet-plugin.git \
-  && cd /tmp/zeek/aux/bro-af_packet-plugin \
-  && find . -name "*.bro" -exec sh -c 'mv "$1" "${1%.bro}.zeek"' _ {} \; \
-  && CC=clang ./configure --with-kernel=/usr --bro-dist=/tmp/zeek \
-  && make -j 2 \
-  && make install \
-  && /usr/local/zeek/bin/zeek -NN Bro::AF_Packet
-
 RUN echo "===> Installing apache/metron-bro-plugin-kafka package..." \
-  && cd /tmp/zeek/aux/ \
+  && cd /opt/zeek-git/aux/ \
   && git clone https://github.com/apache/metron-bro-plugin-kafka.git \
-  && apk add --no-cache librdkafka-dev \
-  && cd /tmp/zeek/aux/metron-bro-plugin-kafka \
+  && cd /opt/zeek-git/aux/metron-bro-plugin-kafka \
   && find . -name "*.bro" -exec sh -c 'mv "$1" "${1%.bro}.zeek"' _ {} \; \
-  && CC=clang ./configure --bro-dist=/tmp/zeek \
+  && CC=clang ./configure --bro-dist=/opt/zeek-git \
   && make -j 2 \
   && make install
 
@@ -69,11 +55,11 @@ RUN echo "===> Shrinking image..." \
 RUN echo "===> Size of the Zeek install..." \
   && du -sh /usr/local/zeek
 ####################################################################################################
-FROM alpine:3.10
+FROM debian:stretch
 
 LABEL maintainer "Rouzbeh Radparvar"
 
-RUN apk --no-cache add ca-certificates zlib openssl libstdc++ libpcap libmaxminddb libgcc fts librdkafka
+RUN apt-get install ca-certificates zlib openssl libstdc++ libpcap libmaxminddb libgcc fts librdkafka
 
 COPY --from=builder /usr/local/zeek /usr/local/zeek
 COPY local.zeek /usr/local/zeek/share/zeek/site/local.zeek

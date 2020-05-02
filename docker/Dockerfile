@@ -1,27 +1,27 @@
 FROM debian:stretch
 
 RUN apt-get update && apt-get install -y \
-    bison \
-    build-essential \
-    ca-certificates \
-    cmake \
-    flex \
-    gawk \
-    git \
-    libcurl4-openssl-dev \
-    libgeoip-dev \
-    libjemalloc-dev \
-    libmaxminddb-dev \
-    libncurses5-dev \
-    libpcap-dev \
-    librocksdb-dev \
-    libssl1.0-dev \
-    python3-dev \
-    python3-pip \
-    swig \
-    wget \
-    zlib1g-dev \
-    --no-install-recommends
+  bison \
+  build-essential \
+  ca-certificates \
+  cmake \
+  flex \
+  gawk \
+  git \
+  libcurl4-openssl-dev \
+  libgeoip-dev \
+  libjemalloc-dev \
+  libmaxminddb-dev \
+  libncurses5-dev \
+  libpcap-dev \
+  librocksdb-dev \
+  libssl1.0-dev \
+  python3-dev \
+  python3-pip \
+  swig \
+  wget \
+  zlib1g-dev \
+  --no-install-recommends
 
 # get latest zeek from source
 WORKDIR /opt
@@ -54,6 +54,9 @@ RUN echo "===> Shrinking image..." \
 
 RUN echo "===> Size of the Zeek install..." \
   && du -sh /usr/local/zeek
+
+RUN echo "===> Install zeek exporter..." \
+  && zkg install zeek-exporter
 ####################################################################################################
 FROM debian:stretch
 

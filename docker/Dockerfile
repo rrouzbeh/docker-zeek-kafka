@@ -24,11 +24,9 @@ RUN apt-get update && apt-get install -y \
   --no-install-recommends
 
 # get latest zeek from source
-WORKDIR /opt
 RUN git clone --recursive https://github.com/zeek/zeek /opt/zeek-git
-WORKDIR /opt/zeek-git
 
-WORKDIR /tmp/
+WORKDIR /opt/zeek-git
 RUN ./configure --with-jemalloc=/usr/lib/x86_64-linux-gnu --prefix=/usr/local/zeek
 RUN make -j4 install
 

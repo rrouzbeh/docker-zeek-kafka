@@ -1,5 +1,5 @@
 FROM debian:stretch
-
+ENV ZEEK_VERSION 3.0.3
 RUN apt-get update && apt-get install -y \
   bison \
   build-essential \
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
   --no-install-recommends
 
 # get latest zeek from source
-RUN git clone --recursive https://github.com/zeek/zeek /opt/zeek-git
+RUN git clone --recursive --branch v$ZEEK_VERSION https://github.com/zeek/zeek /opt/zeek-git
 
 WORKDIR /opt/zeek-git
 RUN ./configure --with-jemalloc=/usr/lib/x86_64-linux-gnu --prefix=/usr/local/zeek

@@ -1,5 +1,5 @@
-# This Bro script appends JA3 to ssl.log
-# Version 1.3 (June 2017)
+# This Zeek script appends JA3 to ssl.log
+# Version 1.4 (January 2020)
 #
 # Authors: John B. Althouse (jalthouse@salesforce.com) & Jeff Atkinson (jatkinson@salesforce.com)
 #
@@ -56,7 +56,7 @@ const grease: set[int] = {
     64250
 };
 const sep = "-";
-event bro_init() {
+event zeek_init() {
     Log::create_stream(JA3::LOG,[$columns=TLSFPStorage, $path="tlsfp"]);
 }
 

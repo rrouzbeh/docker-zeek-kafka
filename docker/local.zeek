@@ -68,7 +68,7 @@
 
 # If you have GeoIP support built in, do some geographic detections and
 # logging for SSH traffic.
-@load protocols/ssh/geo-data
+#@load protocols/ssh/geo-data
 # Detect hosts doing SSH bruteforce attacks.
 @load protocols/ssh/detect-bruteforcing
 # Detect logins using "interesting" hostnames.
@@ -100,9 +100,6 @@
 # this adds the link-layer address for each connection endpoint to the conn.log file.
 @load policy/protocols/conn/mac-logging
 
-# Corlight Bro long connections
-@load scripts/bro-long-connections
-
 # Salesforce hassh 
 @load scripts/hassh
 
@@ -127,11 +124,14 @@
 # Mitre BZAR
 @load scripts/bzar
 
+# publish-community_id
+@load scripts/publish-community_id
+
 # Kafka Plugin
 @load Apache/Kafka
-redef Kafka::logs_to_send = set(Conn::LOG, HTTP::LOG, SSL::LOG, Files::LOG, DNS::LOG, Notice::LOG);
+redef Kafka::logs_to_send = set(Conn::LOG, HTTP::LOG, SSL::LOG, Files::LOG, DNS::LOG, Notice::LOG, RDP::LOG, SSH::LOG);
 redef Kafka::kafka_conf = table(
-    ["metadata.broker.list"] = "kafka:9092"
+    ["metadata.broker.list"] = getenv("KAFKA_BOOTSTRAP_SERVER")
 );
 redef Kafka::topic_name = "";
 redef Kafka::max_wait_on_shutdown = 3000;
@@ -161,6 +161,8 @@ redef Log::default_field_name_map = {
     ["referrer"] = "http_referrer",
     ["request_body_len"] = "bytes_out",
     ["response_body_len"] = "bytes_in",
+    ["orig_l2_addr"] = "src_l2_addr",
+    ["resp_l2_addr"] = "dst_l2_addr",
     ["community_id"] = "network_community_id",
     ["_node_name"] = "sensor_node_name",
     ["_interface"] = "sensor_interface"

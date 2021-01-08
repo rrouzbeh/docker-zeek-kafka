@@ -6,6 +6,7 @@ services:
     environment:
       - ZEEK_INTERFACE=ens34
       - ZEEK_NODE_NAME=pardis
+      - KAFKA_BOOTSTRAP_SERVER = kafka:9092
     volumes:
       - ./logs:/logs
     cap_add:

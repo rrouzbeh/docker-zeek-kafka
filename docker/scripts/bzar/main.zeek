@@ -1,10 +1,10 @@
 #
-# File: main.bro
+# File: main.zeek
 # Created: 20180701
-# Updated: 20190403
+# Updated: 20201009
 #
 # Copyright 2018 The MITRE Corporation.  All Rights Reserved.
-# Approved for public release.  Distribution unlimited.  Case number 18-2489.
+# Approved for public release.  Distribution unlimited.  Case number 18-3868.
 #
 
 @if ((Version::info$major == 2) && (Version::info$minor <= 5))
@@ -28,53 +28,150 @@ module BZAR;
 
 export
 {
-	# NOTICE - Raise Notices for these ATT&CK Tactic Categories
+	# NOTICE - Raise Notices for these ATT&CK Tactics & Categories
+
 	redef enum Notice::Type +=
 	{
 		ATTACK::Credential_Access,
 		ATTACK::Defense_Evasion,
 		ATTACK::Discovery,
 		ATTACK::Execution,
+		ATTACK::Impact,
 		ATTACK::Lateral_Movement,
 		ATTACK::Lateral_Movement_and_Execution,
 		ATTACK::Lateral_Movement_Extracted_File,
+		ATTACK::Lateral_Movement_Multiple_Attempts,
 		ATTACK::Persistence,
 	};
 
-	#
-	# BZAR Analytics - Use SumStats to correlate ATT&CK Techniques
-	#
+	# Full descriptive name of each ATT&CK Technique
+	# Used in BZAR Reporting
 
-	# 1- SumStats Analytics for ATT&CK Lateral Movement and Execution
-	const bzar1_epoch = 10min &redef;
-	const bzar1_limit = 1001.0 &redef; # SMB_WRITE == 1; RPC_EXEC == 1000;
+	const attack_info : table[string] of string = 
+	{
+		["t1003.006"] = "T1003.006 OS Credential Dumping: DCSync", 
+		["t1547.004"] = "T1547.004 Boot or Logon Autostart Execution: Winlogon Helper DLL",
+		["t1547.010"] = "T1547.010 Boot or Logon Autostart Execution: Port Monitors",
+		["t1016"] = "T1016 System Network Configuration Discovery",
+		["t1018"] = "T1018 Remote System Discovery",
+		["t1033"] = "T1033 System Owner/User Discovery",
+		["t1569.002"] = "T1569.002 System Services: Service Execution",
+		["t1047"] = "T1047 WMI",
+		["t1049"] = "T1049 System Network Connections Discovery",
+		["t1053.002"] = "T1053.002 Scheduled Task/Job: At",
+		["t1053.005"] = "T1053.005 Scheduled Task/Job: Scheduled Task",
+		["t1069"] = "T1069 Permission Groups Discovery",
+		["t1070.001"] = "T1070.001 Indicator Removal on Host: Clear Windows Event Logs",
+		["t1021.002"] = "T1021.002 Remote Services: SMB/Windows Admin Shares",
+		["t1082"] = "T1082 System Information Discovery",
+		["t1083"] = "T1083 File and Directory Discovery",
+		["t1087"] = "T1087 Account Discovery",
+		["t1570"] = "T1570 Lateral Tool Transfer",
+		["t1124"] = "T1124 System Time Discovery",
+		["t1135"] = "T1135 Network Share Discovery",
+		["t1529"] = "T1529 System Shutdown/Reboot",
+	} &redef;
 
-	# 2- SumStats Analytics for ATTACK Lateral Movement (Multiple Attempts)
-	# Use threshold vector for greater fidelity and to assist in tuning the
-	# threshold for each unique environment.
-	const bzar2_epoch = 5min &redef;
-	const bzar2_limit = vector(5.0, 10.0, 15.0, 20.0, 30.0, 40.0, 50.0, 100.0) &redef;
+	type EndpointWhitelist : record
+	{
+		# Specify IP Addresses to ignore
+		orig_addrs : set[addr] &optional;
+		resp_addrs : set[addr] &optional;
 
-	# 3- SumStats Analytics for ATTACK Discovery
-	# Use threshold vector for greater fidelity and to assist in tuning the
-	# threshold for each unique environment.
-	const bzar3_epoch = 5min &redef;
-	const bzar3_limit = vector(5.0, 10.0, 15.0, 20.0, 30.0, 40.0, 50.0, 100.0) &redef;
+		# Specify IP Subnets to ignore
+		orig_subnets : set[subnet] &optional;
+		resp_subnets : set[subnet] &optional;
 
-	# Ignore Activity from these Originating IP Addresses
-	const ignore_orig_h : set[addr] = {127.0.0.1,} &redef;
-
-	# Ignore Activity to these Responding IP Addresses
-	const ignore_resp_h : set[addr] = {127.0.0.1,} &redef;
-
-	# Enable/Disable File Extraction
-	const file_extract_option = T &redef; 
+		# Specify Host Names to ignore
+		orig_names : set[string] &optional;
+		resp_names : set[string] &optional;
+	} &redef;
 }
 #end export
 
 
+#
+# Helper Functions
+#
+
+function whitelist_test( orig_h : addr, resp_h : addr, w : BZAR::EndpointWhitelist ) : bool
+{
+	local match : bool = F;
+
+	#
+	# Check if Endpoint IP Addrs are Associated with Whitelist
+	#
+
+	if ( w?$orig_addrs && (orig_h in w$orig_addrs) )
+	{
+		match = T;
+	}
+	else if ( w?$resp_addrs && (resp_h in w$resp_addrs) )
+	{
+		match = T;
+	}
+	else if ( w?$orig_subnets && (orig_h in w$orig_subnets) )
+	{
+		match = T;
+	}
+	else if ( w?$resp_subnets && (resp_h in w$resp_subnets) )
+	{
+		match = T;
+	}
+	else if ( w?$orig_names )
+	{
+		when ( (local n1 = lookup_addr(orig_h)) && (n1 in w$orig_names) )
+		{
+			match = T;
+		}
+		timeout BZAR::whitelist_dns_timeout
+		{
+			match = F;
+		}
+	}
+	else if ( w?$resp_names )
+	{
+		when ( (local n2 = lookup_addr(resp_h)) && (n2 in w$resp_names) )
+		{
+			match = T;
+		}
+		timeout BZAR::whitelist_dns_timeout
+		{
+			match = F;
+		}
+	}
+
+	return match;
+}
+
+
+function sort_func( a : double, b : double ) : int
+{
+	if ( a < b)
+		return -1;
+	else
+		return 1;
+}
+
+
+#
+# BZAR Initialization
+#
+
+@if ( Version::info$major >= 3 )
+
+# Use this syntax for Zeek v3.x.x and above
+event zeek_init()
+{
+
+@else
+
+# Use this syntax for Bro v2.x.x and below
 event bro_init()
 {
+
+@endif
+
 	# 1- SumStats Analytics for ATT&CK Lateral Movement and Execution
 	#
 	# Description:
@@ -84,22 +181,28 @@ event bro_init()
 	#    the same (targeted) host, within a specified period of time.
 	#
 	# Relevant ATT&CK Technique(s):
-	#    T1077 Windows Admin Shares (file shares only, not named pipes) &&
-	#    T1105 Remote File Copy && (T1035 Service Execution || T1047 WMI || T1053 Scheduled Task)
+	#    T1021.002 Remote Services: SMB/Windows Admin Shares (file shares only, not
+	#    named pipes) && T1570 Lateral Tool Transfer && (T1569.002 System Services:
+	#    Service Execution|| T1047 WMI || T1053.002 Scheduled Task/Job: At ||
+	#    T1053.005 Scheduled Task/Job: Scheduled Task)
 	#
 	# Relevant Indicator(s) Detected by Bro/Zeek:
 	#    (a) smb1_write_andx_response::c$smb_state$path contains ADMIN$ or C$
-	#    (b) smb2_write_request::c$smb_state$path contains ADMIN$ or C$ *
+	#    (b) smb2_write_request::c$smb_state$path contains ADMIN$ or C$**
 	#    (c) dce_rpc_response::c$dce_rpc$endpoint + c$dce_rpc$operation contains 
-	#        any of the following: (see BZAR::rpc_execution set).
+	#        any of the following:
+	#          BZAR::t1569_002_rpc_strings
+	#          BZAR::t1047_rpc_strings
+	#          BZAR::t1053_002_rpc_strings
+	#          BZAR::t1053_005_rpc_strings
 	# 
-	# NOTE: Preference would be to detect 'smb2_write_response' 
+	# **NOTE: Preference would be to detect 'smb2_write_response' 
 	#       event (instead of 'smb2_write_request'), because it 
 	#       would confirm the file was actually written to the 
 	#       remote destination.  Unfortuantely, Bro/Zeek does 
 	#       not have an event for that SMB message-type yet.
 	#
-	# Globals (defined in main.bro above):
+	# Globals (defined in bzar_config_options.zeek):
 	#    bzar1_epoch
 	#    bzar1_limit
 
@@ -147,36 +250,36 @@ event bro_init()
 	#    is successful --just connection attempts-- within a specified period of time.
 	#
 	# Relevant ATT&CK Technique(s):
-	#    T1077 Windows Admin Shares (file shares only, not named pipes)
+	#    T1021.002 SMB/Windows Admin Shares (file shares only, not named pipes)
 	#
 	# Relevant Indicator(s) Detected by Bro/Zeek:
 	#    (a) smb1_tree_connect_andx_request::c$smb_state$path contains ADMIN$ or C$
 	#    (b) smb2_tree_connect_request::c$smb_state$path contains ADMIN$ or C$
 	#
-	# Globals (defined in main.bro above):
+	# Globals (defined in bzar_config_options.zeek):
 	#    bzar2_epoch
 	#    bzar2_limit
 
 	local bzar2 = SumStats::Reducer(
-		$stream="attack_t1077",
+		$stream="attack_lm_multiple_t1021_002",
 		$apply=set(SumStats::SUM)
 	);
 
 	SumStats::create([
-		$name = "attack_t1077_notice",
+		$name = "attack_t1021_002_notice",
 		$reducers  = set(bzar2),
 		$epoch     = bzar2_epoch,
-		$threshold_series = bzar2_limit,
+		$threshold_series = sort(bzar2_limit, sort_func),
 		$threshold_val (key:SumStats::Key, result:SumStats::Result) =
 		{
-			return result["attack_t1077"]$sum;
+			return result["attack_lm_multiple_t1021_002"]$sum;
 		},
 		$threshold_crossed(key:SumStats::Key, result:SumStats::Result) = 
 		{
-			local s = fmt("Detected T1077 Admin File Share activity from host %s, total attempts %.0f within timeframe %s", key$host, result["attack_t1077"]$sum, bzar2_epoch);
+			local s = fmt("Detected T1021.002 Admin File Share activity from host %s, total attempts %.0f within timeframe %s", key$host, result["attack_lm_multiple_t1021_002"]$sum, bzar2_epoch);
 
 			# Raise Notice
-			NOTICE([$note=ATTACK::Lateral_Movement,
+			NOTICE([$note=ATTACK::Lateral_Movement_Multiple_Attempts,
 				$msg=s]
 			);
 		}
@@ -203,9 +306,18 @@ event bro_init()
 	#
 	# Relevant Indicator(s) Detected by Bro/Zeek:
 	#    (a) dce_rpc_response::c$dce_rpc$endpoint + c$dce_rpc$operation contains 
-	#        any of the following: (see BZAR::rpc_dicsovery set).
+	#        any of the following:
+	#          BZAR::t1016_rpc_strings
+	#          BZAR::t1018_rpc_strings
+	#          BZAR::t1033_rpc_strings
+	#          BZAR::t1069_rpc_strings
+	#          BZAR::t1082_rpc_strings
+	#          BZAR::t1083_rpc_strings
+	#          BZAR::t1087_rpc_strings
+	#          BZAR::t1124_rpc_strings
+	#          BZAR::t1135_rpc_strings
 	# 
-	# Globals (defined in main.bro above):
+	# Globals (defined in bzar_config_options.zeek):
 	#    bzar3_epoch
 	#    bzar3_limit
 
@@ -218,7 +330,7 @@ event bro_init()
 		$name = "attack_discovery_notice",
 		$reducers  = set(bzar3),
 		$epoch     = bzar3_epoch,
-		$threshold_series = bzar3_limit,
+		$threshold_series = sort(bzar3_limit, sort_func),
 		$threshold_val (key:SumStats::Key, result:SumStats::Result) =
 		{
 			return result["attack_discovery"]$sum;
@@ -235,4 +347,4 @@ event bro_init()
 	]);
 }
 
-#end main.bro
+#end main.zeek

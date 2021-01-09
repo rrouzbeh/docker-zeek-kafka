@@ -10,7 +10,8 @@ jobs:
     working_directory: ~/zeek-kafka/docker
     executor: docker-publisher
     steps:
-      - checkout
+      - checkout:
+          path: ~/zeek-kafka
       - setup_remote_docker
       - run:
           name: Build Docker image

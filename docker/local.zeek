@@ -149,7 +149,7 @@ redef record SSH::Info += {
 @load Apache/Kafka
 redef Kafka::send_all_active_logs = T;
 redef Kafka::tag_json = T;
-redef Kafka::topic_name = "zeek";
+redef Kafka::topic_name = getenv("TOPIC_NAME");
 redef Kafka::kafka_conf = table(
     ["metadata.broker.list"] = getenv("KAFKA_BOOTSTRAP_SERVER")
 );

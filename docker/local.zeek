@@ -127,44 +127,31 @@
 # publish-community_id
 @load scripts/publish-community_id
 
+
+redef record DNS::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+};
+redef record Conn::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+};
+redef record HTTP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+};
+redef record SSL::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+};
+redef record SSH::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+};
+
+
 # Kafka Plugin
 @load Apache/Kafka
-redef Kafka::logs_to_send = set(Conn::LOG, HTTP::LOG, SSL::LOG, Files::LOG, DNS::LOG, Notice::LOG, RDP::LOG, SSH::LOG);
+redef Kafka::send_all_active_logs = T;
+redef Kafka::tag_json = T;
+redef Kafka::topic_name = "zeek";
 redef Kafka::kafka_conf = table(
     ["metadata.broker.list"] = getenv("KAFKA_BOOTSTRAP_SERVER")
 );
-redef Kafka::topic_name = "";
 redef Kafka::max_wait_on_shutdown = 3000;
 redef Kafka::json_timestamps = JSON::TS_ISO8601;
-
-redef Log::default_field_name_map = {
-    ["id.orig_h"] = "src_ip_addr",
-    ["id.orig_p"] = "src_port",
-    ["id.resp_h"] = "dst_ip_addr",
-    ["id.resp_p"] = "dst_port",
-    ["proto"] = "protocol",
-    ["tx_hosts"] = "src_ip_addr",
-    ["rx_hosts"] = "dst_ip_addr",
-    ["local_orig"] = "src_is_local",
-    ["local_resp"] = "dst_is_local",
-    ["service"] = "service_name",
-    ["orig_bytes"] = "bytes_out",
-    ["orig_ip_bytes"] = "bytes_out_ip",
-    ["resp_bytes"] = "bytes_in",
-    ["resp_ip_bytes"] = "bytes_in_ip",
-    ["missed_bytes"] = "bytes_missed",
-    ["orig_pkts"] = "packets_out",
-    ["resp_pkts"] = "packets_in",
-    ["user_agent"] = "http_user_agent",
-    ["resp_mime_types"] = "http_content_type",
-    ["method"] = "http_method",
-    ["referrer"] = "http_referrer",
-    ["request_body_len"] = "bytes_out",
-    ["response_body_len"] = "bytes_in",
-    ["orig_l2_addr"] = "src_l2_addr",
-    ["resp_l2_addr"] = "dst_l2_addr",
-    ["community_id"] = "network_community_id",
-    ["_node_name"] = "sensor_node_name",
-    ["_interface"] = "sensor_interface"
-
-    };

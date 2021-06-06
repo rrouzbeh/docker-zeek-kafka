@@ -62,12 +62,13 @@ RUN echo "===> Installing apache/metron-bro-plugin-kafka package..." \
   && cd /opt/zeek-git \
   && git clone https://github.com/corelight/zeek-community-id
 
-WORKDIR /opt/zeek-git/zeek-community-id
-RUN ./configure --zeek-dist=/opt/zeek-git \
-  && cd build \
-  && make \
-  && make install
-RUN  echo "===> Check if zeek-community-id plugin installed..." && /usr/local/zeek/bin/zeek -N Corelight::CommunityID
+#WORKDIR /opt/zeek-git/zeek-community-id
+#RUN git checkout master
+#RUN ./configure --zeek-dist=/opt/zeek-git \
+#  && cd build \
+#  && make \
+#  && make install
+#RUN  echo "===> Check if zeek-community-id plugin installed..." && /usr/local/zeek/bin/zeek -N Corelight::CommunityID
 
 
 FROM base

@@ -128,21 +128,316 @@
 @load scripts/publish-community_id
 
 
-redef record DNS::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-};
 redef record Conn::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
 };
+
+redef record DCE_RPC::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record DHCP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record DNP3::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record DNS::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record FTP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
 redef record HTTP::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
 };
-redef record SSL::Info += {
+
+redef record IRC::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
 };
+
+redef record KRB::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Modbus::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Modbus::MemmapInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record MySQL::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record NTLM::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record NTP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record RADIUS::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record RDP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record RFB::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SIP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SMB::CmdInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SMB::FileInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SMB::TreeInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SMTP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SNMP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record SOCKS::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
 redef record SSH::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
 };
+
+redef record SSL::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Syslog::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Tunnel::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Files::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record OCSP::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record PE::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record X509::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record NetControl::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record NetControl::DropInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record NetControl::ShuntInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record NetControl::CatchReleaseInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record OpenFlow::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Intel::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Notice::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Notice::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Signatures::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Traceroute::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Known::CertsInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Known::HostsInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Known::ModbusInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Known::ServicesInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Software::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Barnyard2::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record DPD::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Unified2::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record UnknownProtocol::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Weird::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record WeirdStats::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Broker::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record CaptureLoss::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Cluster::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Config::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record LoadedScripts::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record PacketFilter::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Log::PrintLogInfo += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Reporter::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
+redef record Stats::Info += {
+    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
+    hash:    string    &default=getenv("HASH")    &log;
+};
+
 
 
 # Kafka Plugin

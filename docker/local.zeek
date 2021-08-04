@@ -173,15 +173,6 @@ redef record KRB::Info += {
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record Modbus::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record Modbus::MemmapInfo += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
 
 redef record MySQL::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
@@ -273,11 +264,6 @@ redef record Files::Info += {
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record OCSP::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
 redef record PE::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
     hash:    string    &default=getenv("HASH")    &log;
@@ -288,25 +274,6 @@ redef record X509::Info += {
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record NetControl::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record NetControl::DropInfo += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record NetControl::ShuntInfo += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record NetControl::CatchReleaseInfo += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
 
 redef record OpenFlow::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
@@ -333,22 +300,8 @@ redef record Signatures::Info += {
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record Traceroute::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record Known::CertsInfo += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
 
 redef record Known::HostsInfo += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record Known::ModbusInfo += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
     hash:    string    &default=getenv("HASH")    &log;
 };
@@ -363,35 +316,17 @@ redef record Software::Info += {
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record Barnyard2::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
 redef record DPD::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record Unified2::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
-
-redef record UnknownProtocol::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
 
 redef record Weird::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
     hash:    string    &default=getenv("HASH")    &log;
 };
 
-redef record WeirdStats::Info += {
-    pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
-    hash:    string    &default=getenv("HASH")    &log;
-};
 
 redef record Broker::Info += {
     pcap_name:    string    &default=getenv("PCAP_NAME")    &log;
